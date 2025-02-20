@@ -1,5 +1,5 @@
-require('dotenv').config();
-console.log("Email User:", process.env.EMAIL_USER); // Debugging
+require('dotenv').config(); // Explicit path
+console.log("Email User:", process.env.EMAIL_USER); 
 console.log("Email Pass:", process.env.EMAIL_PASS ? "Loaded" : "Not Loaded");
 
 // Import required modules
