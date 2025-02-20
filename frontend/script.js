@@ -33,7 +33,7 @@ document.getElementById("contact-form").addEventListener("submit", async functio
   const API_URL =
     window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
       ? "http://localhost:5000/send" // Local development
-      : "/send"; // Vercel deployment (relative path)
+      : "/api/send"; // Vercel deployment (relative path)
 
   try {
     // Send the POST request to the API
