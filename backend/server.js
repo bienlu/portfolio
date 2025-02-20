@@ -1,3 +1,7 @@
+require('dotenv').config();
+console.log("Email User:", process.env.EMAIL_USER); // Debugging
+console.log("Email Pass:", process.env.EMAIL_PASS ? "Loaded" : "Not Loaded");
+
 // Import required modules
 const express = require("express");
 const cors = require("cors");
