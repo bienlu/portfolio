@@ -1,5 +1,5 @@
 // Load environment variables from .env file (for local development)
-require('dotenv').config();
+require('dotenv').config({ path: './backend/.env' });
 
 // Import required modules
 const express = require('express');
