@@ -5,6 +5,6 @@
     ],
     "routes": [
       { "src": "/send", "dest": "/backend/server.js" },
-      { "src": "/(.*)", "dest": "/frontend/index.html" }
+      { "src": "/(.*)", "dest": "/frontend/portfolio.html" }
     ]
   }
