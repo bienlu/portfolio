@@ -1,56 +1,69 @@
-require("dotenv").config();
-const express = require("express");
-const cors = require("cors");
-const nodemailer = require("nodemailer");
+// Load environment variables from .env file (for local development)
+require('dotenv').config();
 
+// Import required modules
+const express = require('express');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+
+// Initialize the Express app
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-// Function to validate email format
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+// Middleware
+app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
+app.use(express.json()); // Parse JSON request bodies
 
-app.post("/send", async (req, res) => {
+// Define the port (use process.env.PORT for Vercel compatibility)
+const PORT = process.env.PORT || 5000;
+
+// Route to handle form submissions
+app.post('/send', (req, res) => {
   const { name, email, message } = req.body;
 
-  // Validate inputs
+  // Validate input
   if (!name || !email || !message) {
-    return res.status(400).json({ message: "All fields are required." });
+    return res.status(400).json({ message: 'All fields are required!' });
   }
 
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ message: "Invalid email format." });
-  }
+  // Create a transporter for sending emails
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER, // Gmail address
+      pass: process.env.EMAIL_PASS, // App Password
+    },
+  });
 
-  try {
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+  // Email options
+  const mailOptions = {
+    from: process.env.EMAIL_USER, // Sender address
+    to: process.env.EMAIL_USER,   // Recipient address (can be the same as sender)
+    subject: `New Contact Form Submission from ${name}`,
+    text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+  };
 
-    const mailOptions = {
-      from: `"${name}" <${email}>`, 
-      to: process.env.EMAIL_USER,
-      subject: `New Contact Form Submission from ${name}`,
-      text: `Message:\n${message}\n\nReply to: ${email}`,
-    };
-
-    await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent successfully!");
-
-    res.status(200).json({ message: "Email sent successfully!" });
-  } catch (error) {
-    console.error("❌ Error sending email:", error);
-    res.status(500).json({ message: "Server error. Email not sent." });
-  }
+  // Send the email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      return res.status(500).json({ message: 'Failed to send email' });
+    }
+    console.log('Email sent:', info.response);
+    res.status(200).json({ message: 'Email sent successfully!' });
+  });
 });
 
-// Use dynamic port for better deployment compatibility
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
+// Default route (for testing purposes)
+app.get('/', (req, res) => {
+  res.send('Backend server is running!');
+});
+
+// Start the server (only for local testing)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// Export the app for Vercel deployment
+module.exports = app;
