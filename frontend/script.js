@@ -32,7 +32,7 @@ document.getElementById("contact-form").addEventListener("submit", async functio
   // Determine the API URL based on the environment
   const API_URL =
     window.location.hostname.includes("localhost")
-      ? "http://localhost:5000/api/send" // Local development
+      ? "http://localhost:5000/api/send" // Local testing
       : "https://portfolio-38x25kar4-thiens-projects-26bef224.vercel.app/api/send"; // Vercel deployment
 
   try {
