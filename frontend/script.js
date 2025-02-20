@@ -31,9 +31,9 @@ document.getElementById("contact-form").addEventListener("submit", async functio
 
   // Determine the API URL based on the environment
   const API_URL =
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-      ? "http://localhost:5000/send" // Local development
-      : "/api/send"; // Vercel deployment (relative path)
+    window.location.hostname.includes("localhost")
+      ? "http://localhost:5000/api/send" // Local development
+      : "https://portfolio-38x25kar4-thiens-projects-26bef224.vercel.app/api/send"; // Vercel deployment
 
   try {
     // Send the POST request to the API
@@ -52,7 +52,14 @@ document.getElementById("contact-form").addEventListener("submit", async functio
     document.getElementById("popup").classList.remove("hidden");
     form.reset();
   } catch (error) {
-    // Display an error message below the form
+    console.error("Error:", error);
+
+    // Remove old error messages before adding a new one
+    const existingErrorMessage = form.querySelector(".text-red-600");
+    if (existingErrorMessage) {
+      existingErrorMessage.remove();
+    }
+
     const errorMessage = document.createElement("p");
     errorMessage.innerText = "Error sending message. Please try again.";
     errorMessage.className = "text-red-600 text-sm";
@@ -65,7 +72,10 @@ document.getElementById("contact-form").addEventListener("submit", async functio
   }
 });
 
-// Close the popup when clicking outside of it
-document.getElementById("popup").addEventListener("click", function (event) {
-  if (event.target === this) closePopup();
-});
+// Ensure popup exists before adding an event listener
+const popup = document.getElementById("popup");
+if (popup) {
+  popup.addEventListener("click", function (event) {
+    if (event.target === this) closePopup();
+  });
+}
